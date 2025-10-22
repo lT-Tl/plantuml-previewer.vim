@@ -2,6 +2,8 @@ let s:Process = vital#plantuml_previewer#new().import('System.Process')
 let s:Job = vital#plantuml_previewer#new().import('System.Job')
 let s:is_win = has('win32') || has('win64') || has('win95')
 
+let s:export_along_src = get(g:, "plantuml_previewer#export_along_src", 1)
+
 let s:base_path = fnameescape(expand("<sfile>:p:h")) . '/..'
 
 let s:default_jar_path = s:base_path . '/lib/plantuml.jar'
@@ -97,8 +99,20 @@ function! plantuml_previewer#default_viewer_path() "{{{
   return s:base_path . '/viewer'
 endfunction "}}}
 
+"function! s:viewer_path() "{{{
+"  let path = get(g:, 'plantuml_previewer#viewer_path', 0)
+"  return s:is_zero(path) ? plantuml_previewer#default_viewer_path() : fnameescape(path)
+"endfunction "}}}
+
 function! s:viewer_path() "{{{
-  let path = get(g:, 'plantuml_previewer#viewer_path', 0)
+  let path = ''
+
+  if s:export_along_src
+    let path = fnameescape(expand("%:p:h"))
+  else
+    let path = get(g: 'plantuml_previewer#viewer_path', 0)
+  endif
+
   return s:is_zero(path) ? plantuml_previewer#default_viewer_path() : fnameescape(path)
 endfunction "}}}
 
